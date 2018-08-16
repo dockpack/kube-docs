@@ -125,11 +125,11 @@ A `StorageClass` provides a way for administrators to describe the “classes”
 
 Also refer to https://kubernetes.io/docs/concepts/storage/storage-classes/
 
-You can define a storage class for local storage by creating below `StorageClass`. Copy the YAML file based on chosen installation method and save as, i.e. `local-sc.yaml`. Use `kubectl create -f local-sc.yaml` to deploy it.
+You can define a storage class for local storage by creating below `StorageClass`. Copy the YAML file based on chosen installation method and save as, i.e. [local-sc.yaml](storage/local-sc.yaml). Use `kubectl create -f local-sc.yaml` to deploy it.
 
 #### Register local persistent volume
 
-You can allocate some space for persistent storage by creating below `PersistentVolume`. Copy the YAML file based on chosen installation method and save as, i.e. `local-pv.yaml`. Use `kubectl create -f local-pv.yaml` to deploy it.
+You can allocate some space for persistent storage by creating below `PersistentVolume`. Copy the YAML file based on chosen installation method and save as, i.e. [local-pv.yaml](storage/local-pv.yaml). Use `kubectl create -f local-pv.yaml` to deploy it.
 
 `Note: don't use this configuration for production clusters!`
 
@@ -137,7 +137,7 @@ Also refer to https://kubernetes.io/docs/concepts/storage/persistent-volumes/
 
 #### Claim storage on persistent volumes
 
-You can claim some space for persistent storage by creating below `PersistentVolumeClaim`. Copy the YAML file based on chosen installation method and save as, i.e. `local-pvc.yaml`. Use `kubectl create -f local-pvc.yaml` to deploy it.
+You can claim some space for persistent storage by creating below `PersistentVolumeClaim`. Copy the YAML file based on chosen installation method and save as, i.e. [local-pvc.yaml](storage/local-pvc.yaml). Use `kubectl create -f local-pvc.yaml` to deploy it.
 
 ### Fixing connectivity issues with `kube proxy`
 
@@ -189,14 +189,14 @@ vagrant@k8s-01:~$ kubectl create serviceaccount tiller --namespace tiller-world
 serviceaccount "tiller" created
 ```
 
-Define a Role that allows `Tiller` to manage all resources in tiller-world like in `role-tiller.yaml`:
+Define a Role that allows `Tiller` to manage all resources in tiller-world like in [role-tiller.yaml](helm/role-tiller.yaml):
 
 ```
 vagrant@k8s-01:~$ kubectl create -f role-tiller.yaml
 role "tiller-manager" created
 ```
 
-Use `rolebinding-tiller.yaml` to create your binding.
+Use [rolebinding-tiller.yaml](helm/rolebinding-tiller.yaml) to create your binding.
 
 ```
 vagrant@k8s-01:~$ kubectl create -f rolebinding-tiller.yaml
@@ -231,13 +231,13 @@ vagrant@k8s-01:~$ helm repo add incubator https://kubernetes-charts-incubator.st
 
 #### Install `Jenkins` on your Kubernetes cluster using `Helm`.
 
-Create a persistent volume for Jenkins. Use `jenkins/jenkins-pv.yaml` for creating the `PersistentVolume`.
+Create a persistent volume for Jenkins. Use [jenkins-pv.yaml](jenkins/jenkins-pv.yaml) for creating the `PersistentVolume`.
 
 ```
 vagrant@k8s-01:~$ kubectl create -f jenkins-pv.yml --namespace tiller-world
 ```
 
-Create a persistent volume claim for Jenkins.
+Create a persistent volume claim for Jenkins. Use [jenkins-pvc.yaml](jenkins/jenkins-pvc.yaml) for creating the `PersistentVolumeClaim`.
 
 ```
 vagrant@k8s-01:~$ kubectl create -f jenkins-pvc.yml --namespace tiller-world
