@@ -1,0 +1,14 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: jenkins-pv
+  labels:
+    type: local
+spec:
+  storageClassName: local-storage
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/home/vagrant/jenkins"

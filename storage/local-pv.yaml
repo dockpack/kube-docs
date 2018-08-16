@@ -1,0 +1,14 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: local-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: local-storage
+  capacity:
+    storage: 30Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/home/vagrant"
