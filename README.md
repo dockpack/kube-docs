@@ -4,6 +4,7 @@
 
 - [Setting up Kubernetes clusters](#setting-up-kubernetes-clusters)
 	- [Local cluster using Kubespray and Vagrant](#local-cluster-using-kubespray-and-vagrant)
+		- [Change base OS](#change-base-os)
 		- [Fixing connectivity issues with `kube proxy` and `Vagrant`](#fixing-connectivity-issues-with-kube-proxy-and-vagrant)
 		- [Starting the cluster](#starting-the-cluster)
 		- [Administration](#administration)
@@ -25,6 +26,14 @@ Refer to https://github.com/kubernetes-incubator/kubespray/ for more information
 ```
 $ git clone https://github.com/kubernetes-incubator/kubespray.git
 $ cd kubespray
+```
+
+### Change base OS
+
+Change your base OS to CentOS.
+
+```
+$ echo "\$os = \"centos\"" >> vagrant/config.rb
 ```
 
 ### Fixing connectivity issues with `kube proxy` and `Vagrant`
