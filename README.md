@@ -1,5 +1,23 @@
 # Setting up Kubernetes clusters
 
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [Setting up Kubernetes clusters](#setting-up-kubernetes-clusters)
+	- [Local cluster using Kubespray and Vagrant](#local-cluster-using-kubespray-and-vagrant)
+		- [Fixing connectivity issues with `kube proxy` and `Vagrant`](#fixing-connectivity-issues-with-kube-proxy-and-vagrant)
+		- [Starting the cluster](#starting-the-cluster)
+		- [Administration](#administration)
+		- [Deploy and run a sample voting app](#deploy-and-run-a-sample-voting-app)
+		- [Persistent storage](#persistent-storage)
+			- [Create a storage class for local storage](#create-a-storage-class-for-local-storage)
+			- [Register local persistent volume](#register-local-persistent-volume)
+			- [Claim storage on persistent volumes](#claim-storage-on-persistent-volumes)
+		- [Installing and configuring the `Helm` package manager](#installing-and-configuring-the-helm-package-manager)
+		- [Using `Terraform` to manage resources on your cluster](#using-terraform-to-manage-resources-on-your-cluster)
+		- [Using `kompose` to translate `Docker Compose` files to `Kubernetes`](#using-kompose-to-translate-docker-compose-files-to-kubernetes)
+
+<!-- /TOC -->
+
 ## Local cluster using Kubespray and Vagrant
 
 Refer to https://github.com/kubernetes-incubator/kubespray/ for more information.
@@ -7,6 +25,23 @@ Refer to https://github.com/kubernetes-incubator/kubespray/ for more information
 ```
 $ git clone https://github.com/kubernetes-incubator/kubespray.git
 $ cd kubespray
+```
+
+### Fixing connectivity issues with `kube proxy` and `Vagrant`
+
+You will have issues with connecting to cluster services using kube proxy across multiple hosts.
+
+You need to update the `flannel` configuration such that networking combined with `Vagrant` works properly.
+
+Modify `kubespray/inventory/sample/group_vars/k8s-cluster.yml` and add the following variable.
+
+```yaml
+flannel_interface: eth1
+```
+
+### Starting the cluster
+
+```
 $ vagrant up
 ```
 
@@ -75,21 +110,6 @@ Also refer to https://kubernetes.io/docs/concepts/storage/persistent-volumes/
 
 You can claim some space for persistent storage by creating below `PersistentVolumeClaim`. Copy the YAML file based on chosen installation method and save as, i.e. [local-pvc.yaml](storage/local-pvc.yaml). Use `kubectl create -f local-pvc.yaml` to deploy it.
 
-### Fixing connectivity issues with `kube proxy`
-
-You might have issues with connecting to cluster services using kube proxy.
-Executing the following commands as a workaround on each node will fix these issues.
-
-```
-# iptables -R KUBE-FIREWALL 1 -j ACCEPT
-# iptables -R KUBE-SERVICES 1 -j ACCEPT
-# iptables -R KUBE-SERVICES 2 -j ACCEPT
-# apt-get -y install netfilter-persistent
-# service netfilter-persistent start
-```
-
-`TODO: find a better way of fixing these issues :)`
-
 ### Installing and configuring the `Helm` package manager
 
 Helm helps you manage Kubernetes applications — Helm Charts helps you define, install, and upgrade even the most complex Kubernetes application.
@@ -111,3 +131,11 @@ While you could use `kubectl` or similar CLI-based tools mapped to API calls to 
 Please refer to https://www.terraform.io/docs/providers/kubernetes/guides/getting-started.html for more information.
 
 Please refer to [terraform.md](terraform.md) for managing resources using `Terraform`.
+
+### Using `kompose` to translate `Docker Compose` files to `Kubernetes`
+
+`kompose` is a tool to help users who are familiar with `docker-compose` move to [Kubernetes](http://kubernetes.io). `kompose` takes a Docker Compose file and translates it into Kubernetes resources.
+
+`kompose` is a convenience tool to go from local Docker development to managing your application with Kubernetes. Transformation of the Docker Compose format to Kubernetes resources manifest may not be exact, but it helps tremendously when first deploying an application on Kubernetes.
+
+Please refer to [kompose.md](kompose.md) for translating `Docker Compose` to `Kubernetes`.

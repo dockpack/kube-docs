@@ -66,13 +66,13 @@ vagrant@k8s-01:~$ helm repo add incubator https://kubernetes-charts-incubator.st
 Create a persistent volume for Jenkins. Use [jenkins-pv.yaml](jenkins/jenkins-pv.yaml) for creating the `PersistentVolume`.
 
 ```
-vagrant@k8s-01:~$ kubectl create -f jenkins-pv.yml --namespace tiller-world
+vagrant@k8s-01:~$ kubectl create -f jenkins-pv.yaml --namespace tiller-world
 ```
 
 Create a persistent volume claim for Jenkins. Use [jenkins-pvc.yaml](jenkins/jenkins-pvc.yaml) for creating the `PersistentVolumeClaim`.
 
 ```
-vagrant@k8s-01:~$ kubectl create -f jenkins-pvc.yml --namespace tiller-world
+vagrant@k8s-01:~$ kubectl create -f jenkins-pvc.yaml --namespace tiller-world
 ```
 
 Install Jenkins using Helm.

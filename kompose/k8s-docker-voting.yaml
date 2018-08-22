@@ -1,0 +1,256 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      com.example.description: Postgres Database
+      kompose.cmd: kompose convert --file docker-voting.yaml -o k8s-docker-voting.yaml
+      kompose.version: 1.16.0 ()
+    creationTimestamp: null
+    labels:
+      io.kompose.service: db
+    name: db
+  spec:
+    ports:
+    - name: "5432"
+      port: 5432
+      targetPort: 5432
+    selector:
+      io.kompose.service: db
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert --file docker-voting.yaml -o k8s-docker-voting.yaml
+      kompose.version: 1.16.0 ()
+    creationTimestamp: null
+    labels:
+      io.kompose.service: redis
+    name: redis
+  spec:
+    ports:
+    - name: "6379"
+      port: 6379
+      targetPort: 6379
+    selector:
+      io.kompose.service: redis
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      com.example.description: Result
+      kompose.cmd: kompose convert --file docker-voting.yaml -o k8s-docker-voting.yaml
+      kompose.service.expose: "true"
+      kompose.version: 1.16.0 ()
+    creationTimestamp: null
+    labels:
+      io.kompose.service: result
+    name: result
+  spec:
+    ports:
+    - name: "31001"
+      port: 31001
+      targetPort: 80
+    selector:
+      io.kompose.service: result
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      com.example.description: Vote
+      kompose.cmd: kompose convert --file docker-voting.yaml -o k8s-docker-voting.yaml
+      kompose.service.expose: "true"
+      kompose.version: 1.16.0 ()
+    creationTimestamp: null
+    labels:
+      io.kompose.service: vote
+    name: vote
+  spec:
+    ports:
+    - name: "31000"
+      port: 31000
+      targetPort: 80
+    selector:
+      io.kompose.service: vote
+  status:
+    loadBalancer: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      com.example.description: Postgres Database
+      kompose.cmd: kompose convert --file docker-voting.yaml -o k8s-docker-voting.yaml
+      kompose.version: 1.16.0 ()
+    creationTimestamp: null
+    labels:
+      io.kompose.service: db
+    name: db
+  spec:
+    replicas: 1
+    strategy: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: db
+      spec:
+        containers:
+        - image: postgres:9.4
+          name: db
+          ports:
+          - containerPort: 5432
+          resources: {}
+        restartPolicy: Always
+  status: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert --file docker-voting.yaml -o k8s-docker-voting.yaml
+      kompose.version: 1.16.0 ()
+    creationTimestamp: null
+    labels:
+      io.kompose.service: redis
+    name: redis
+  spec:
+    replicas: 1
+    strategy: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: redis
+      spec:
+        containers:
+        - image: redis:alpine
+          name: redis
+          ports:
+          - containerPort: 6379
+          resources: {}
+        restartPolicy: Always
+  status: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      com.example.description: Result
+      kompose.cmd: kompose convert --file docker-voting.yaml -o k8s-docker-voting.yaml
+      kompose.service.expose: "true"
+      kompose.version: 1.16.0 ()
+    creationTimestamp: null
+    labels:
+      io.kompose.service: result
+    name: result
+  spec:
+    replicas: 1
+    strategy: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: result
+      spec:
+        containers:
+        - image: tmadams333/example-voting-app-result:latest
+          name: result
+          ports:
+          - containerPort: 80
+          resources: {}
+        restartPolicy: Always
+  status: {}
+- apiVersion: extensions/v1beta1
+  kind: Ingress
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: result
+    name: result
+  spec:
+    rules:
+    - http:
+        paths:
+        - backend:
+            serviceName: result
+            servicePort: 31001
+  status:
+    loadBalancer: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      com.example.description: Vote
+      kompose.cmd: kompose convert --file docker-voting.yaml -o k8s-docker-voting.yaml
+      kompose.service.expose: "true"
+      kompose.version: 1.16.0 ()
+    creationTimestamp: null
+    labels:
+      io.kompose.service: vote
+    name: vote
+  spec:
+    replicas: 1
+    strategy: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: vote
+      spec:
+        containers:
+        - image: docker/example-voting-app-vote:latest
+          name: vote
+          ports:
+          - containerPort: 80
+          resources: {}
+        restartPolicy: Always
+  status: {}
+- apiVersion: extensions/v1beta1
+  kind: Ingress
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: vote
+    name: vote
+  spec:
+    rules:
+    - http:
+        paths:
+        - backend:
+            serviceName: vote
+            servicePort: 31000
+  status:
+    loadBalancer: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert --file docker-voting.yaml -o k8s-docker-voting.yaml
+      kompose.version: 1.16.0 ()
+    creationTimestamp: null
+    labels:
+      io.kompose.service: worker
+    name: worker
+  spec:
+    replicas: 1
+    strategy: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: worker
+      spec:
+        containers:
+        - image: docker/example-voting-app-worker:latest
+          name: worker
+          resources: {}
+        restartPolicy: Always
+  status: {}
+kind: List
+metadata: {}
+

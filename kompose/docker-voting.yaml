@@ -1,0 +1,35 @@
+version: "2"
+
+services:
+  vote:
+    image: docker/example-voting-app-vote:latest
+    ports:
+      - "31000:80"
+    expose:
+      - "31000"
+    labels:
+     - "com.example.description=Vote"
+     - "kompose.service.expose=true"
+
+  redis:
+    image: redis:alpine
+    ports: ["6379"]
+
+  worker:
+    image: docker/example-voting-app-worker:latest
+
+  db:
+    image: postgres:9.4
+    ports: ["5432"]
+    labels:
+     - "com.example.description=Postgres Database"
+
+  result:
+    image: tmadams333/example-voting-app-result:latest
+    ports:
+      - "31001:80"
+    expose:
+      - "31001"
+    labels:
+     - "com.example.description=Result"
+     - "kompose.service.expose=true"
